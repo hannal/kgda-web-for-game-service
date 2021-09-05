@@ -1,1 +1,11 @@
 django
+djangorestframework
+pytest
+pytest-django
+django-test-plus
+requests
+requests_mock
+factory-boy
+django-redis
+djangorestframework_simplejwt
+gunicorn
