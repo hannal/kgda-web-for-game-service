@@ -1,0 +1,1 @@
+# kgda-web-for-game-service
