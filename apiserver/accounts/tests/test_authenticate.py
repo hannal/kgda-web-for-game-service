@@ -16,7 +16,7 @@ class AuthenticateTest(TestCase):
             'password': 'hello',
         }
         res = self.post(self.base_url, data=payload)
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 201)
 
     @patch('accounts.models.User.find_by_credentials')
     def test_auth_failure(self, mock):

@@ -16,4 +16,4 @@ def authenticate(request):
     user = models.User.find_by_credentials(username, password)
     if not user:
         return HttpResponse('mismatch credentials', status=401)
-    return HttpResponse('hello world')
+    return HttpResponse('hello world', status=201)
