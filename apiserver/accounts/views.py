@@ -23,7 +23,11 @@ def authenticate(request):
 
 def user_info(request):
     header = request.headers.get('Authorization') or ''
-    __, token = header.split()
+    try:
+        __, token = header.split()
+    except ValueError:
+        return HttpResponse('required token', status=401)
+
     try:
         token = models.AccessToken.objects.get(key=token)
     except models.AccessToken.DoesNotExist:

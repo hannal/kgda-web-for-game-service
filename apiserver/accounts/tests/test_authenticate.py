@@ -63,3 +63,16 @@ class AuthenticateTest(TestCase):
         self.assertEqual(res.status_code, 200)
         data = res.json()
         self.assertEqual(user.username, data['username'])
+
+    def test_me_failure(self):
+        res = self.get(self.me_url)
+        self.assertEqual(res.status_code, 401)
+        self.assertIn('required', str(res.content))
+
+        headers = {
+            'HTTP_AUTHORIZATION': 'Token invalid-token',
+        }
+
+        res = self.get(self.me_url, extra=headers)
+        self.assertEqual(res.status_code, 401)
+        self.assertIn('invalid', str(res.content))
