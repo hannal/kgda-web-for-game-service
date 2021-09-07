@@ -19,3 +19,14 @@ def authenticate(request):
 
     token = models.AccessToken.create(user)
     return JsonResponse({'access_token': token.key}, status=201)
+
+
+def user_info(request):
+    header = request.headers.get('Authorization') or ''
+    __, token = header.split()
+    try:
+        token = models.AccessToken.objects.get(key=token)
+    except models.AccessToken.DoesNotExist:
+        return HttpResponse('invalid token', status=401)
+
+    return JsonResponse({'username': token.user.username}, status=200)

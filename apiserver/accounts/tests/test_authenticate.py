@@ -5,7 +5,9 @@ from accounts.models import User, AccessToken
 
 
 class AuthenticateTest(TestCase):
-    base_url = '/accounts/auth/'
+    base_url = '/accounts/'
+    auth_url = f'{base_url}auth/'
+    me_url = f'{base_url}me/'
 
     def create_patch(self, name):
         patcher = patch(name)
@@ -25,7 +27,7 @@ class AuthenticateTest(TestCase):
             'username': 'hello',
             'password': 'hello',
         }
-        res = self.post(self.base_url, data=payload)
+        res = self.post(self.auth_url, data=payload)
         self.assertEqual(res.status_code, 201)
         data = res.json()
         self.assertEqual(token.key, data['access_token'])
@@ -34,15 +36,30 @@ class AuthenticateTest(TestCase):
     def test_auth_failure(self, mock):
         mock.return_value = None
 
-        res = self.get(self.base_url)
+        res = self.get(self.auth_url)
         self.assertEqual(405, res.status_code)
 
-        res = self.post(self.base_url)
+        res = self.post(self.auth_url)
         self.assertEqual(400, res.status_code)
 
         payload = {
             'username': 'hello',
             'password': 'hello',
         }
-        res = self.post(self.base_url, data=payload)
+        res = self.post(self.auth_url, data=payload)
         self.assertEqual(401, res.status_code)
+
+    @patch('accounts.models.AccessToken.objects.get')
+    def test_me_success(self, mock):
+        user = User(username='authorized_user')
+        token = AccessToken(user=user, key='valid_token')
+        mock.return_value = token
+
+        headers = {
+            'HTTP_AUTHORIZATION': f'Token {token.key}',
+        }
+
+        res = self.get(self.me_url, extra=headers)
+        self.assertEqual(res.status_code, 200)
+        data = res.json()
+        self.assertEqual(user.username, data['username'])
