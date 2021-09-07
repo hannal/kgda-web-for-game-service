@@ -1,5 +1,7 @@
 from django.http.response import HttpResponse
 
+from . import models
+
 
 def authenticate(request):
     if request.method.lower() != 'post':
@@ -10,4 +12,8 @@ def authenticate(request):
 
     if not username or not password:
         return HttpResponse('invalid payload', status=400)
+
+    user = models.User.find_by_credentials(username, password)
+    if not user:
+        return HttpResponse('mismatch credentials', status=401)
     return HttpResponse('hello world')
