@@ -27,7 +27,8 @@ class AuthenticateTest(TestCase):
         }
         res = self.post(self.base_url, data=payload)
         self.assertEqual(res.status_code, 201)
-        self.assertIn(token.key, str(res.content))
+        data = res.json()
+        self.assertEqual(token.key, data['access_token'])
 
     @patch('accounts.models.User.find_by_credentials')
     def test_auth_failure(self, mock):

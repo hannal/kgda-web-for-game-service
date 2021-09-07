@@ -1,4 +1,4 @@
-from django.http.response import HttpResponse
+from django.http.response import HttpResponse, JsonResponse
 
 from . import models
 
@@ -16,5 +16,6 @@ def authenticate(request):
     user = models.User.find_by_credentials(username, password)
     if not user:
         return HttpResponse('mismatch credentials', status=401)
+
     token = models.AccessToken.create(user)
-    return HttpResponse(token.key, status=201)
+    return JsonResponse({'access_token': token.key}, status=201)
