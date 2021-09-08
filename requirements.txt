@@ -9,3 +9,4 @@ factory-boy
 django-redis
 djangorestframework_simplejwt
 gunicorn
+psycopg2-binary
