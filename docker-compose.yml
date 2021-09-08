@@ -1,0 +1,25 @@
+version: "3"
+
+volumes:
+  pg_data: {}
+
+services:
+  web:
+    platform: linux/amd64
+    build:
+      context: .
+      args:
+        CONTAINER_ENV: development
+    volumes:
+      - ./apiserver:/app
+    ports:
+      - "8111:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=apiserver.settings.local
+    restart: always
+    command:
+      - bash
+      - -c
+      - |
+        python manage.py migrate
+        python manage.py runserver 0:8000
